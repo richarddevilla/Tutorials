@@ -3,8 +3,10 @@ from datetime import datetime
 def inputDOB():
     while True:
         dob = input('Input your date of birth(dd/mm/yyyy): ')
-        if validateDOB(dob):break
-    return validateDOB(dob)
+        validDOB = validateDOB(dob)
+        if validDOB:
+            break
+    return validDOB
 
 def validateDOB(dob):
     try:
@@ -19,28 +21,61 @@ def validateDOB(dob):
         print('Unexpected error! Please try again.')
     return False
 
-def calculateAge(dobParsed):
+def calculateAge(validDOB):
     currentDate = datetime.now()
-    age = currentDate.year - dobParsed.year
-    if (currentDate.month, currentDate.day) < (dobParsed.month, dobParsed.day):
+    age = currentDate.year - validDOB.year
+    if (currentDate.month, currentDate.day) < (validDOB.month, validDOB.day):
         age -= 1
     return age
 
 def inputName():
     while True:
         name = input('Input your name: ')
-        if validateName(name):break
-    return name
+        validName = validateName(name)
+        if validName:
+            break
+    return validName
 
 def validateName(name):
     if name.isalpha():
-        return True
+        return name
     else:
         print('Please input letters only!')
         return False
 
-name = inputName()
-dobParsed = inputDOB()
-age = calculateAge(dobParsed)
+def generatePassword(sequence1,sequence2,passwordLength=6):
+    #convert sequence to binary
+
+    binarySequence = ''
+    binarySequence2 =''
+    for char in sequence1:
+        binarySequence += (format(ord(char), 'b'))
+    for char in sequence2:
+        binarySequence2 += (format(ord(char), 'b'))
+
+    #calculate the maximum possible size of bits
+    #based on the binarySequence and passwordLength
+    itemSize = len(binarySequence) // passwordLength
+    newBinarySequence = []
+    counter = 0
+    while not len(newBinarySequence) == passwordLength:
+        andBinary = int(binarySequence[counter:counter + itemSize],2) | int(binarySequence2,2)
+        newBinarySequence.append(andBinary)
+        counter+=itemSize
+    return newBinarySequence
+
+
+# name = inputName()
+# dob = inputDOB()
+# age = calculateAge(dob)
+name = 'Richard'
+dob = 19870822
+age = 34
 print('Hi! ' + name)
 print('You are ' + str(age) + ' years old')
+
+fullInfo = str(dob)+str(age)
+password = generatePassword(fullInfo,name)
+print(password)
+#password = ''.join(format(for each in fullInfo,'b'))
+
